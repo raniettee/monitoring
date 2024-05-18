@@ -39,41 +39,14 @@ groups:
       summary: "Stockage du serveur presque plein"
       description: "L'utilisation du stockage de l'hôte Docker est de {{ humanize $value }}%. Signalé par l'instance {{ $labels.instance }} du job {{ $labels.job }}."
 
-- name: containers
-  rules:
-
-  - alert: reverse_nginx_down
-    expr: absent(container_memory_usage_bytes{name="reverse nginx"})
-    for: 30s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Reverse Nginx en panne"
-      description: "Le conteneur Reverse Nginx est en panne depuis plus de 30 secondes."
-
-  - alert: database_down
-    expr: absent(container_memory_usage_bytes{name="deployements_database_1"})
-    for: 30s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Database Deployements en panne"
-      description: "Le conteneur database est en panne depuis plus de 30 secondes."
-
-  - alert: backend_down
-    expr: absent(container_memory_usage_bytes{name="backend"})
-    for: 30s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Backend en panne"
-      description: "Le conteneur backend est en panne depuis plus de 30 secondes."
-
-  - alert: frontend_down
-    expr: absent(container_memory_usage_bytes{name="frontend"})
-    for: 30s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Frontend en panne"
-      description: "Le conteneur frontend est en panne depuis plus de 30 secondes."
+groups:
+  - name: cadvisor_rules
+    rules:
+      - alert: ContainerDown
+        expr: absent(container_memory_usage_bytes{name="cadvisor"} offset 1m)
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container {{ $labels.name }} is down"
+          description: "Container {{ $labels.name }} has been down for more than 1 minute."
