@@ -1,0 +1,27 @@
+global:
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'blibechmedamine@gmail.com'
+  smtp_auth_username: 'blibechmedamine@gmail.com'
+  smtp_auth_password: 'lwvw qgmn iuuk tweb'
+  smtp_require_tls: true
+
+route:
+  receiver: 'email'
+
+receivers:
+  - name: 'email'
+    email_configs:
+      - to: 'blibechmedamine@gmail.com'
+        send_resolved: true
+        from: 'blibechmedamine@gmail.com'
+        smarthost: 'smtp.gmail.com:587'
+        auth_username: 'blibechmedamine@gmail.com'
+        auth_password: 'lwvw qgmn iuuk tweb'
+        require_tls: true
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']

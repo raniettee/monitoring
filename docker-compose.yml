@@ -28,6 +28,23 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    restart: unless-stopped
+    expose:
+      - 9093
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
 
 
   cadvisor:
@@ -67,6 +84,18 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      
+  pushgateway:
+    image: prom/pushgateway:v1.8.0
+    container_name: pushgateway
+    restart: unless-stopped
+    expose:
+      - 9091
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
 
   caddy:
     image: caddy:2.7.6
@@ -75,6 +104,8 @@ services:
       - "3000:3000"
       - "8080:8080"
       - "9090:9090"
+      - "9093:9093"
+      - "9091:9091"
     volumes:
       - ./caddy:/etc/caddy
     environment:
